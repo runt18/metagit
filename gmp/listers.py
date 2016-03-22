@@ -190,7 +190,7 @@ protocol: used for cloning the repository (choices: ssh/https/git)"""
         
         RepoLister.__init__(self, **kwargs)
         self.username = username
-        if self.username == None:
+        if self.username is None:
             cmd = "git config --get github.user"
             process = subprocess.Popen(cmd, shell = True,
                                        stdout = subprocess.PIPE,

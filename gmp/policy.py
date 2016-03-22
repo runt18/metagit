@@ -19,7 +19,7 @@ your working directory you can define a policy for this repository,
 that it is only visible on your local machine."""
         result = False
         for (regexp, policy) in self.policies:
-            if re.match(".*" + regexp, hostname) != None:
+            if re.match(".*" + regexp, hostname) is not None:
                 if policy == "allow":
                     result = True
                 else:

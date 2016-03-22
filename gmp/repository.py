@@ -31,7 +31,7 @@ default_policy: defines if the repo can be cloned on all machines ("allow") or n
         self.clone_url = clone_url
         # If no local_url is specified, we use the last part of the clone url
         # without the .git
-        if local_url == None:
+        if local_url is None:
             m = re.match(".*/([^/]+?)(\\." + scm.binary + ")?$", clone_url)
             if m:
                 # Remove .git / .hg or whatever
