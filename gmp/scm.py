@@ -72,23 +72,29 @@ class SCM:
     #
     # Helper functions for executing things
     #
-    def __exec_string(self, command, args = []):
+    def __exec_string(self, command, args = None):
         """Produces an shell command for <command> + <args>"""
+        if args is None:
+            args = []
         # Escape all ' characters
         args = [esc(x) for x in args]
         return " ".join([self.binary, self.__alias(command),
                          self.__option(command)] + args)
-    def execute(self, command, args = [], destdir = None, **kwargs):
+    def execute(self, command, args = None, destdir = None, **kwargs):
         """Will use the self.<command> function if there is one, or
         otherwise use __execute to do it directly"""
+        if args is None:
+            args = []
         if command in dir(self):
             return getattr(self, command)(args = args, destdir = destdir, **kwargs)
 
         return self.bare_execute(command, args, destdir, **kwargs)
 
-    def bare_execute(self, command, args = [], destdir = None, echo = True):
+    def bare_execute(self, command, args = None, destdir = None, echo = True):
         """Prints the command to stdout and executes it within a shell
         context. Everything will be fine escaped"""
+        if args is None:
+            args = []
         command = self.__exec_string(command, args)
         parallel = Options.opt("parallel")
 
@@ -137,9 +143,11 @@ class SCM:
     # Wrapper functions for scm commands, can be overriden by
     # subclassing. These functions will overide the normal execution function
     #
-    def clone(self, args = [], destdir = None):
+    def clone(self, args = None, destdir = None):
         """Calling this method will clone the remote_repo
         to the local url. This method will execute the command"""
+        if args is None:
+            args = []
 
         [remote_repo, local_repo] = args
         return self.bare_execute("clone", [remote_repo, local_repo])
@@ -172,7 +180,9 @@ class GitSvn(Git):
 
     name = "git-svn"
 
-    def __init__(self, externals = [], headonly = False, limit = None):
+    def __init__(self, externals = None, headonly = False, limit = None):
+        if externals is None:
+            externals = []
         Git.__init__(self)
         self.externals = externals
         self.headonly = headonly
