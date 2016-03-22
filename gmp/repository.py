@@ -79,9 +79,11 @@ default_policy: defines if the repo can be cloned on all machines ("allow") or n
     def get_state(self):
         return self.scm.get_state(self.local_url)
 
-    def execute(self, command, args = [], parallel = False, **kwargs):
+    def execute(self, command, args = None, parallel = False, **kwargs):
         """Will use the self.<command> function if there is one, or
         otherwise use scm.execute to do it directly"""
+        if args is None:
+            args = []
         if command in dir(self):
             return getattr(self, command)(command, args = args, **kwargs)
 
