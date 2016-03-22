@@ -94,7 +94,7 @@ class SCM:
 
         # Maybe we have to change the directory first
         if destdir:
-            command = "cd %s; %s" %(esc(destdir), command)
+            command = "cd {0!s}; {1!s}".format(esc(destdir), command)
 
         if parallel:
             command += " >/dev/null"
@@ -111,7 +111,7 @@ class SCM:
 
         for cmd in self.options.keys():
             for option in self.options[cmd]:
-                ret += ".add_option(%s, %s)" %(repr(cmd),
+                ret += ".add_option({0!s}, {1!s})".format(repr(cmd),
                                                repr(option))
         return ret
 
@@ -179,11 +179,10 @@ class GitSvn(Git):
         self.limit = limit
 
     def __str_keyword_arguments__(self):
-        return "(externals = %s, headonly = %s, limit = %s)" % \
-               (repr(self.externals), repr(self.headonly), repr(self.limit))
+        return "(externals = {0!s}, headonly = {1!s}, limit = {2!s})".format(repr(self.externals), repr(self.headonly), repr(self.limit))
 
     def __externals(self, destdir):
-        process = subprocess.Popen("cd %s; git svn propget svn:externals" % esc(destdir),
+        process = subprocess.Popen("cd {0!s}; git svn propget svn:externals".format(esc(destdir)),
                                    shell = True,
                                    stdout = subprocess.PIPE)
         process.wait()

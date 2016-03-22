@@ -78,9 +78,9 @@ class RepoLister (PolicyMixin):
         repos = self.create_repos()
         if self.cache and len (repos) > 0:
             cache = open(self.cache, "w+")
-            cache.write("[%s" % str(repos[0]))
+            cache.write("[{0!s}".format(str(repos[0])))
             for r in repos[1:]:
-                cache.write(",\n %s" % str(r))
+                cache.write(",\n {0!s}".format(str(r)))
             cache.write("]")
             cache.close()
         return repos.__iter__()
@@ -113,9 +113,9 @@ directory: remote directory where the git repos are searched"""
         self.clone_urls = []
         for repo in process.stdout.readlines():
             # Finding none bare repositories
-            m = re.match("^(.*)/\.%s$" % self.scm.binary, repo)
+            m = re.match("^(.*)/\.{0!s}$".format(self.scm.binary), repo)
             m = m or re.match("(.*)/refs$", repo)
-            if m and not re.match(".*(svn|logs)/refs", repo) and not re.match(".*\.%s/" % self.scm.binary, repo):
+            if m and not re.match(".*(svn|logs)/refs", repo) and not re.match(".*\.{0!s}/".format(self.scm.binary), repo):
                 remote = m.group(1)
                 local = remote[len(self.directory)+1:]
                 self.clone_urls.append((self.host + ":" + remote, local))
@@ -127,10 +127,10 @@ directory: remote directory where the git repos are searched"""
     def upload(self, local, remote):
         """Uploads a local repository with scp to a remote location"""
 
-        push_url = "%s:%s" %(self.host,
+        push_url = "{0!s}:{1!s}".format(self.host,
                              os.path.join(self.directory, remote))
         
-        cmd = "scp -r %s %s"% (esc(local),
+        cmd = "scp -r {0!s} {1!s}".format(esc(local),
                                esc(push_url))
         print cmd
         a = subprocess.Popen(cmd, shell = True)
@@ -206,7 +206,7 @@ protocol: used for cloning the repository (choices: ssh/https/git)"""
         self.protocol = protocol
 
     def get_list(self):
-        js = urllib2.urlopen("https://api.github.com/users/%s/repos"%self.username).read()
+        js = urllib2.urlopen("https://api.github.com/users/{0!s}/repos".format(self.username)).read()
         repos = json.loads(js)
         self.clone_urls = []
         for repo in repos:
@@ -219,11 +219,11 @@ protocol: used for cloning the repository (choices: ssh/https/git)"""
     def github_url(self, name):
         url = ""
         if self.protocol == "ssh":
-            url = "git@github.com:%s/%s.git" % (self.username, name)
+            url = "git@github.com:{0!s}/{1!s}.git".format(self.username, name)
         elif self.protocol == "https":
-            url = "https://%s@github.com/%s/%s.git" %(self.username, self.username, name)
+            url = "https://{0!s}@github.com/{1!s}/{2!s}.git".format(self.username, self.username, name)
         else:
-            url = "git://github.com/%s/%s.git" %(self.username, name)
+            url = "git://github.com/{0!s}/{1!s}.git".format(self.username, name)
         return url
         
     def can_upload(self):
@@ -244,7 +244,7 @@ Please set the github.token variable via git config"""
             print "ERROR: Please define github.token via git config"
             sys.exit(-1)
 
-        print "Creating new remote repository '%s'" % remote
+        print "Creating new remote repository '{0!s}'".format(remote)
         data = urllib.urlencode({'login': self.username, 'token': token, 'name': remote})
         try:
             xml = urllib2.urlopen("http://github.com/api/v2/xml/repos/create", data = data)
@@ -253,7 +253,7 @@ Please set the github.token variable via git config"""
             sys.exit(-1)
         xml.close()
 
-        cmd = "cd %s; git push %s master" % (esc(local),
+        cmd = "cd {0!s}; git push {1!s} master".format(esc(local),
                                              esc(self.github_url(remote)))
         print cmd
         a = subprocess.Popen(cmd, shell = True)
@@ -298,17 +298,17 @@ protocol: used for cloning the repository (choices: ssh/http/git)"""
         self.gitorious = gitorious
 
     def get_list(self):
-        print "http://%s/~%s"%(self.gitorious, self.username)
-        site = urllib2.urlopen("https://%s/~%s"%(self.gitorious, self.username))
+        print "http://{0!s}/~{1!s}".format(self.gitorious, self.username)
+        site = urllib2.urlopen("https://{0!s}/~{1!s}".format(self.gitorious, self.username))
         lines_to_read = 0
 
         self.clone_urls = []
-        prefixes = {"ssh": "git@%s:"%self.gitorious,
-                    "http": "git.%s/"%self.gitorious,
-                    "git": "git://%s/"%self.gitorious}
+        prefixes = {"ssh": "git@{0!s}:".format(self.gitorious),
+                    "http": "git.{0!s}/".format(self.gitorious),
+                    "git": "git://{0!s}/".format(self.gitorious)}
 
         if not self.protocol in prefixes:
-            print "Protocol %s not supported by gitorious list plugin" % self.protocol
+            print "Protocol {0!s} not supported by gitorious list plugin".format(self.protocol)
             sys.exit(-1)
 
         # FIXME: Find a good API for gitorious cause this frickel
@@ -335,7 +335,7 @@ protocol: used for cloning the repository (choices: ssh/https/git)"""
             kwargs['name'] = "gitlab"
 
         RepoLister.__init__(self, **kwargs)
-        cmd = "git config --get gitlab.%s.token" % host
+        cmd = "git config --get gitlab.{0!s}.token".format(host)
         process = subprocess.Popen(cmd, shell = True,
                                    stdout = subprocess.PIPE,
                                    stderr = subprocess.PIPE)
@@ -351,7 +351,7 @@ protocol: used for cloning the repository (choices: ssh/https/git)"""
 
     def get_list(self):
         headers = {"PRIVATE-TOKEN": self.gitlab_token}
-        url = "https://%s/api/v3/projects/owned" % self.host
+        url = "https://{0!s}/api/v3/projects/owned".format(self.host)
         request = urllib2.Request(url, headers=headers)
         js = urllib2.urlopen(request).read()
         repos = json.loads(js)

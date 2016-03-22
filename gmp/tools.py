@@ -18,8 +18,7 @@ class ScreenExecutor:
 
     def push(cmd):
         i = ScreenExecutor.get()
-        i.screen_fd.write("""screen %d sh -c "echo; echo '%s' ; %s; echo Press ENTER;read a"\n""" 
-                          % (i.counter, cmd.replace("'", "\\\""), cmd))
+        i.screen_fd.write("""screen {0:d} sh -c "echo; echo '{1!s}' ; {2!s}; echo Press ENTER;read a"\n""".format(i.counter, cmd.replace("'", "\\\""), cmd))
         i.counter += 1
     push = staticmethod(push)
 
@@ -28,7 +27,7 @@ class ScreenExecutor:
             i = ScreenExecutor.get()
             i.screen_fd.write('caption always "%{wR}%c | %?%-Lw%?%{wB}%n*%f %t%?(%u)%?%{wR}%?%+Lw%?"\n')
             i.screen_fd.close()
-            a = subprocess.Popen("screen -c %s" % i.screen_path, shell=True)
+            a = subprocess.Popen("screen -c {0!s}".format(i.screen_path), shell=True)
             a.wait()
             
             os.unlink(i.screen_path)

@@ -27,7 +27,7 @@ class ManPageFormatter(optparse.HelpFormatter):
         """
         if self.level == 0:
             return ''
-        return '.TP\n%s\n' % self._markup(heading.upper())
+        return '.TP\n{0!s}\n'.format(self._markup(heading.upper()))
  
     def format_option(self, option):
         """FORMAT A SINGLE OPTION.
@@ -35,9 +35,9 @@ class ManPageFormatter(optparse.HelpFormatter):
         """
         result = []
         opts = self.option_strings[option]
-        result.append('.TP\n.B\n%s\n' % self._markup(opts))
+        result.append('.TP\n.B\n{0!s}\n'.format(self._markup(opts)))
         if option.help:
-            help_text = '%s\n' % self._markup(self.expand_default(option))
+            help_text = '{0!s}\n'.format(self._markup(self.expand_default(option)))
             result.append(help_text)
         return ''.join(result)
 
@@ -61,11 +61,11 @@ class build_manpage(Command):
         appname = self.distribution.get_name()
         desc = self.distribution.get_description()
         m = self.parser.formatter._markup
-        stream.write(".TH %s 1 %s\n" %  (m(appname), datetime.datetime.today().strftime("%Y\\-%m\\-%d")))
-        stream.write(".SH NAME\n%s - %s\n" %(m(appname), m(desc)))
-        stream.write(".SH SYNPOSIS\n%s\n" % self.parser.get_usage())
-        stream.write(".SH DESCRIPTION\n%s\n" % m(self.distribution.get_long_description()))
-        stream.write(".SH OPTIONS\n%s\n" % self.parser.format_option_help())
+        stream.write(".TH {0!s} 1 {1!s}\n".format(m(appname), datetime.datetime.today().strftime("%Y\\-%m\\-%d")))
+        stream.write(".SH NAME\n{0!s} - {1!s}\n".format(m(appname), m(desc)))
+        stream.write(".SH SYNPOSIS\n{0!s}\n".format(self.parser.get_usage()))
+        stream.write(".SH DESCRIPTION\n{0!s}\n".format(m(self.distribution.get_long_description())))
+        stream.write(".SH OPTIONS\n{0!s}\n".format(self.parser.format_option_help()))
         stream.write(self.repo.generate_help(nroff=True) + "\n")
 
         stream.write(""".SH ENVIRON
@@ -74,10 +74,9 @@ class build_manpage(Command):
 METAGITRC
 use another config file instead of ~/.metagitrc
 """)
-        author = '%s <%s>' % (self.distribution.get_author(),
+        author = '{0!s} <{1!s}>'.format(self.distribution.get_author(),
                               self.distribution.get_author_email())
-        stream.write('.SH AUTHORS\n.B %s\nwas written by %s.\n'
-                    % (m(appname), m(author)))
+        stream.write('.SH AUTHORS\n.B {0!s}\nwas written by {1!s}.\n'.format(m(appname), m(author)))
         homepage = self.distribution.get_url()
         stream.write('.SH DISTRIBUTION\nThe latest version of %s may '
                     'be downloaded from\n'

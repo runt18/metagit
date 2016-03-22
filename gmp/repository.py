@@ -48,7 +48,7 @@ default_policy: defines if the repo can be cloned on all machines ("allow") or n
 
     def __str__(self):
         """A Repository can be serialized"""
-        ret = "%s(%s, %s, default_policy = %s, scm = %s)" %( 
+        ret = "{0!s}({1!s}, {2!s}, default_policy = {3!s}, scm = {4!s})".format( 
             self.__class__.__name__,
             repr(self.clone_url),
             repr(self.local_url),
@@ -68,7 +68,7 @@ default_policy: defines if the repo can be cloned on all machines ("allow") or n
         local = self.local_url
         if local.startswith(self.homedir):
             local = "~/" + local[len(self.homedir):]
-        return "%s (%s%s) %s --> %s" % (self.get_state(), 
+        return "{0!s} ({1!s}{2!s}) {3!s} --> {4!s}".format(self.get_state(), 
                                         self.scm.name, sets, 
                                         self.clone_url, local)
 
