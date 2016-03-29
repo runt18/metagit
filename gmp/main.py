@@ -70,9 +70,9 @@ line interface"""
         
         text += """
   A selector is a regexp which is checked against the output of metagit
-  list. (Exception: states (%s), current repository (.).
+  list. (Exception: states ({0!s}), current repository (.).
 
-""" %(", ".join(SCM.states))
+""".format((", ".join(SCM.states)))
 
         # Find longest command
         length = max( [ len(x) for x in self.commands.keys() ] )
@@ -165,7 +165,7 @@ line interface"""
 
     def shortcut(self, command, help = None):
         if not help:
-            help = "[selector] - executes <scm> %s on repositories" %(command,)
+            help = "[selector] - executes <scm> {0!s} on repositories".format(command)
         func = lambda x: self.cmd_foreach([self._shortcut(x)[0], command] + self._shortcut(x)[1:])
         func.__doc__ = help
         return func
@@ -225,7 +225,7 @@ will be shown to select from the matching ones"""
             print "cd " + esc(repos[0].local_url)
         elif len(repos) > 1:
             for r in range(1, len(repos)+1):
-                sys.stderr.write("%d. %s\n" %(r,repos[r-1].local_url))
+                sys.stderr.write("{0:d}. {1!s}\n".format(r, repos[r-1].local_url))
 
 
             sys.stderr.write("\nSelect Repository: ")
@@ -270,7 +270,7 @@ RepoLister name (e.g. an SSHDir)"""
         else:
             remote_url = args[2]
 
-        print "Uploading '%s' to '%s' on %s" %(local_url, remote_url, lister.name)
+        print "Uploading '{0!s}' to '{1!s}' on {2!s}".format(local_url, remote_url, lister.name)
         sys.stdout.write("Proceed? (Y/n) ")
         a = raw_input()
         if a in ["", "y", "Y", "yes"]:
@@ -281,8 +281,7 @@ RepoLister name (e.g. an SSHDir)"""
 
         # Changing the origin remote
         if origin:
-            cmd = "cd %s; git remote rm origin; git remote add origin %s" \
-                  %(esc(repo.local_url), 
+            cmd = "cd {0!s}; git remote rm origin; git remote add origin {1!s}".format(esc(repo.local_url), 
                     esc(repo.clone_url))
             print cmd
             a = subprocess.Popen(cmd, shell = True)
