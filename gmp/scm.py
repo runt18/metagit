@@ -223,7 +223,7 @@ class GitSvn(Git):
         # Append -r HEAD to command, so only the top commit is cloned
         if self.headonly:
             opts = ['-r', 'HEAD']
-        elif self.limit != None:
+        elif self.limit is not None:
             opts = ["--limit", str(self.limit)]
         else:
             opts = []
